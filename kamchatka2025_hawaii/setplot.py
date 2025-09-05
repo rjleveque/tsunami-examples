@@ -40,7 +40,8 @@ def setplot(plotdata=None):
     def addgauges(current_data):
         from clawpack.visclaw import gaugetools
         gaugetools.plot_gauge_locations(current_data.plotdata, \
-             gaugenos=[21413,21418], format_string='ko', add_labels=True)
+             format_string='ko', add_labels=True)
+             #gaugenos=[21413,21418], format_string='ko', add_labels=True)
 
     def fixup(current_data):
         import pylab

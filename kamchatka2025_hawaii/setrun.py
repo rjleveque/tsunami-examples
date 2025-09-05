@@ -334,32 +334,31 @@ def setrun(claw_pkg='geoclaw'):
     # Region 0 : Global region.  This assures a maximum refinement in any 
     # regions not covered by other regions listed below.
     
-    regions.append([1, 4, 0., inf, 0, 360, -90, 90])
+    x1,y1 = clawdata.lower
+    x2,y2 = clawdata.upper
+    regions.append([1, 4, 0., inf, x1-1,x2+1,y1-1,y2+1])
 
-    # Region 1 : (from the dtopo file, below).  
-    # Time interval taken from dtopo file : [0,1]
+    #  (from the dtopo file, below).  
     regions.append([4, 4, 0, 2, 154., 163,  48, 54.])
 
     if 0:
-        # Region 2 : Large region encompassing lower 3/4 of domain.
-        # Time interval :  (0,18000)
+        #  Large region encompassing lower 3/4 of domain.
         regions.append([1, 3, 0., 5.*3600., 132., 220., 5., 40.])
 
-        # Region 3 : Region including all Hawaiian Islands.
-        # Time interval  (18000,28800)
+        #  Region including all Hawaiian Islands.
         regions.append([1, 3, 5.*3600.,  8.*3600., 180., 220., 5., 40.])
 
-    # Region 4 : Region including Molekai and Maui. 
-    # Time interval : (23400.0, inf)
+    #  Region including Molekai and Maui. 
     regions.append([4, 4, 5.5*3600., inf, 202.5,204,20.4,21.4])
 
-    # Region 5 : Strip including north shore of Maui.
-    # Time interval :  (25200, inf)
-    regions.append([5, 5, 6.*3600., inf, 203.0, 203.7, 20.88333, 21.])
+    #  Strip including north shore of Maui.
+    regions.append([4, 5, 6.*3600., inf, 203.0, 203.7, 20.88333, 21.2])
 
-    # Region 6 :  Includes port at Kailua.
-    # Time interval :  (26100.0, inf)
-    regions.append([6, 6,  6.25*3600., inf, 203.52,    203.537, 20.89,   20.905])
+    #  Bay around Kahului:
+    regions.append([5, 5, 6.*3600., inf, 203.45, 203.68, 20.88, 21.])
+
+    #  Includes port at Kailua.
+    regions.append([6, 6,  6.25*3600., inf, 203.515, 203.545, 20.885, 20.91])
 
     if 0:
         # tracking main wave:
@@ -374,20 +373,15 @@ def setrun(claw_pkg='geoclaw'):
     gauges = rundata.gaugedata.gauges = []
     # for gauges append lines of the form  [gaugeno, x, y, t1, t2]
     gauges.append([21401, 152.583, 42.617,  0., 1.e10])   
-    gauges.append([21413, 152.1167, 30.5153,  0., 1.e10])   
-    gauges.append([21414, 178.281, 48.938,  0., 1.e10])
-    gauges.append([21415, 171.849, 50.183,  0., 1.e10])
-    #gauges.append([21416, 163.505, 48.052,  0., 1.e10])
-    gauges.append([21418, 148.694, 38.711,     0., 1.e10])   
-    gauges.append([21419, 155.736, 44.455,  0., 1.e10])  
-    #gauges.append([51407, 203.484, 19.642, 22000., 1.e10])
-    gauges.append([52402, 154.116, 11.883, 0., 1.e10])    
-    #gauges.append([1, 145.5, 37.6, 0., 1.e10]) 
-    gauges.append([2, 145.5, 37.4, 0., 1.e10])
-    gauges.append([3, 165, 29.5, 0., 1.e10])    
+    gauges.append([21413, 152.148, 30.487,  0., 1.e10])   
+    gauges.append([21414, 178.165, 48.970,  0., 1.e10])
+    gauges.append([21415, 171.867, 50.120,  0., 1.e10])
+    gauges.append([21416, 163.376, 48.126,  0., 1.e10])
+    gauges.append([21418, 148.800, 38.730,     0., 1.e10])   
+    gauges.append([21419, 155.653, 44.401,  0., 1.e10])  
+    gauges.append([52402, 153.876, 11.928, 0., 1.e10])    
+
     
-    # Hawaii current velocity:
-    gauges.append([1123, 203.52825, 20.9021333, 5.0*3600., 1.e9]) #Kahului
     # more accurate coordinates from Yong Wei at PMEL:
     gauges.append([5680, 203.530944, 20.895, 5.0*3600., 1.e9]) #TG Kahului
 
@@ -456,12 +450,13 @@ def setgeo(rundata):
     
 
     topodir = './'
-    topo_data.topofiles.append([3, 1, 1, 0.0, 1e10, \
+    topo_data.topofiles.append([3, 
                 os.path.join(topodir,'etopo1min130E210E0N60N.asc')])
+
     # hawaii_6s topofile not needed, results very similar either way
-    #topofiles.append([3, 1, 1, 0.0, 1e10, os.path.join(topodir,'hawaii_6s.txt')])
-    topo_data.topofiles.append([3, 1, 1, 0., 1.e10, \
-                os.path.join(topodir,'kahului_1s.txt')])                          
+    #topofiles.append([3, os.path.join(topodir,'hawaii_6s.txt')])
+
+    topo_data.topofiles.append([3, os.path.join(topodir,'kahului_1s.txt')])                          
 
     # == setdtopo.data values ==
     dtopo_data = rundata.dtopo_data
@@ -469,7 +464,8 @@ def setgeo(rundata):
     #   [topotype, fname]
     
     dtopodir = './'
-    dtopo_data.dtopofiles.append([3,1,4,dtopodir+'Kamchatka2025_usgs.dtt3'])
+    #dtopo_data.dtopofiles.append([3,dtopodir+'Kamchatka2025_sift.dtt3'])
+    dtopo_data.dtopofiles.append([3,dtopodir+'Kamchatka2025_usgs.dtt3'])
 
     dtopo_data.dt_max_dtopo = 0.2
 
